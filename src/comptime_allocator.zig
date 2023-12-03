@@ -25,13 +25,25 @@ fn resize(_: *anyopaque, buf: []u8, _: u8, new_len: usize, _: usize) bool {
     _ = buf;
     _ = new_len;
     if (@inComptime()) {
+        // who needs to resize if we can just create more memory
         return false;
     } else @panic("Comptime allocator has to be called in comptime");
 }
 
 fn free(_: *anyopaque, buf: []u8, _: u8, _: usize) void {
     _ = buf;
-    if (@inComptime()) {} else @panic("Comptime allocator has to be called in comptime");
+    if (@inComptime()) {
+        // I don't think we can do this
+    } else @panic("Comptime allocator has to be called in comptime");
+}
+
+test "create" {
+    comptime var a: *i32 = undefined;
+    comptime {
+        a = try allocator.create(i32);
+        a.* = 42;
+    }
+    try std.testing.expect(a.* == 42);
 }
 
 test "comptime ArrayList" {
@@ -48,21 +60,32 @@ test "comptime ArrayList" {
     try std.testing.expectEqualSlices(u8, "Hello, world!", hello_world);
 }
 
-// std.HashMap is not compatible with comptime_allocator
-// test "comptime HashMap" {
-//     const hash_map = comptime blk: {
-//         var hash_map = std.AutoHashMap(i32, []const u8).init(allocator);
+test "comptime json" {
+    const Struct = struct {
+        id: u32,
+        name: []const u8,
+    };
+    const value: Struct = comptime blk: {
+        const slice =
+            \\{
+            \\  "id": 42,
+            \\  "name": "bnl1"
+            \\}
+        ;
 
-//         try hash_map.put(0, "zero");
-//         try hash_map.put(3, "three");
-//         try hash_map.put(10, "ten");
-//         try hash_map.put(11, "eleven");
-//         try hash_map.remove(3);
-
-//         break :blk hash_map;
-//     };
-
-//     try std.testing.expectEqualSlices(u8, "eleven", hash_map.get(11).?);
-//     try std.testing.expectEqualSlices(u8, "zero", hash_map.get(0).?);
-//     try std.testing.expect(hash_map.get(3) == null);
-// }
+        const value = std.json.parseFromSliceLeaky(
+            Struct,
+            allocator,
+            slice,
+            .{},
+        ) catch |err| @compileError(std.fmt.comptimePrint(
+            "json parsing error {s}\n",
+            .{@errorName(err)},
+        ));
+        break :blk value;
+    };
+    try std.testing.expectEqualDeep(
+        Struct{ .id = 42, .name = "bnl1" },
+        value,
+    );
+}
