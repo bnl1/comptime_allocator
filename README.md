@@ -47,7 +47,7 @@ pub fn main() !void {
 for more examples look into tests in src/comptime_allocator.zig
 
 
-## Shortcommings
+## Shortcomings
 The only structure I managed to make it work for is std.ArrayList and parsing json, now that doesn't
 mean it doesn't work for the others, but I woudn't hold my breath. You can try make it work, but most
 problems are inherent to how zig works and std implementation, but if you found other structures it
