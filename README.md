@@ -1,7 +1,7 @@
 # Comptime allocator
 ---
 
-Comptime allocator provides a standart allocation interface for comptile time allocations
+Comptime allocator provides a standart allocation interface for compile time allocations
 
 ## Usage
 tested on 0.12.0-dev.1769+bf5ab5451
