@@ -14,8 +14,9 @@ add these lines into build.zig
     exe.addModule("comptime_allocator", comptime_allocator.module("comptime_allocator"));
 ```
 
+main.zig
 ```zig
-    const comptime_allocator = @import("comptime_allocator);
+    const comptime_allocator = @import("comptime_allocator");
 
     pub fn main() !void {
         comptime var a: *i32 = undefined;
