@@ -1,22 +1,13 @@
 # Comptime allocator
 ---
 
-Comptime allocator provides a standart allocation interface for compile time allocations
+Comptime allocator provides a standard allocation interface for compile time allocations
 
 ## Usage
 tested on 0.12.0-dev.1769+bf5ab5451
-
-add comptime_allocator through zig package manager
-
-add these lines into build.zig
-```zig
-    const comptime_allocator = b.dependency("comptime_allocator", .{});
-    exe.addModule("comptime_allocator", comptime_allocator.module("comptime_allocator"));
-```
-
 main.zig
 ```zig
-    const comptime_allocator = @import("comptime_allocator");
+    const comptime_allocator = @import("comptime_allocator.zig");
 
     pub fn main() !void {
         comptime var a: *i32 = undefined;
@@ -49,9 +40,9 @@ for more examples look into tests in src/comptime_allocator.zig
 
 
 ## Shortcomings
-The only structure I managed to make it work for is std.ArrayList and parsing json, now that doesn't
+The only structures I managed to make it work for are std.ArrayList and parsing json, now that doesn't
 mean it doesn't work for the others, but I woudn't hold my breath. You can try make it work, but most
-problems are inherent to how zig works and std implementation, but if you found other structures it
+problems are inherent to how zig works and std implementation, but if you find other structures it
 works on, I would like to know about it.
 
 It doesn't work for std.HashMap
