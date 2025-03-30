@@ -4,13 +4,8 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const comptime_allocator = b.addModule("comptime_allocator", .{
-        .source_file = .{ .path = "src/comptime_allocator.zig" },
-    });
-    _ = comptime_allocator;
-
     const exe_unit_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/comptime_allocator.zig" },
+        .root_source_file = b.path("src/comptime_allocator.zig"),
         .target = target,
         .optimize = optimize,
     });

@@ -1,6 +1,8 @@
 .{
-    .name = "comptime_allocator",
+    .name = .comptime_allocator,
     .version = "0.0.1",
+    .fingerprint = 0x67d44c65a6d292c2, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.14.0",
     .paths = .{
         "src",
         "build.zig",
