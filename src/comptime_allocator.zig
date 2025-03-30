@@ -14,24 +14,26 @@ pub const allocator = std.mem.Allocator{
     .ptr = undefined,
 };
 
-fn alloc(_: *anyopaque, len: usize, _: u8, _: usize) ?[*]u8 {
+fn alloc(_: *anyopaque, len: usize, ptr_align: u8, _: usize) ?[*]u8 {
     if (@inComptime()) {
-        var array = [_]u8{undefined} ** len;
-        return array[0..].ptr;
+        var array align(1 << ptr_align) = [_]u8{undefined} ** len;
+        return &array;
     } else @panic("Comptime allocator has to be called in comptime");
 }
 
-fn resize(_: *anyopaque, buf: []u8, _: u8, new_len: usize, _: usize) bool {
+fn resize(_: *anyopaque, buf: []u8, ptr_align: u8, new_len: usize, _: usize) bool {
     _ = buf;
     _ = new_len;
+    _ = ptr_align;
     if (@inComptime()) {
         // who needs to resize if we can just create more memory
         return false;
     } else @panic("Comptime allocator has to be called in comptime");
 }
 
-fn free(_: *anyopaque, buf: []u8, _: u8, _: usize) void {
+fn free(_: *anyopaque, buf: []u8, ptr_align: u8, _: usize) void {
     _ = buf;
+    _ = ptr_align;
     if (@inComptime()) {
         // I don't think we can do this
     } else @panic("Comptime allocator has to be called in comptime");
